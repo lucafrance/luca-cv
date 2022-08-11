@@ -1,3 +1,4 @@
+*.4tc
 *.aux
 *.bak
 *.gz
@@ -5,3 +6,4 @@
 *.out
 *.pdf
 *.tmp
+*.xref
