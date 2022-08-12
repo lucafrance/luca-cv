@@ -54,7 +54,10 @@ class CvItem():
         self.title = title
 
     def to_tex(self):
-        return "\\cvitem{{{}}}{{{}}}".format(self.side_txt, self.title)
+        title = self.title
+        if title.startswith("-"):
+            title = "\\( \\circ \\)" + title[1:]
+        return "\\cvitem{{{}}}{{{}}}".format(self.side_txt, title)
 
 class CurriculumVitae():
 
