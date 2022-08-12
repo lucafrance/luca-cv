@@ -5,13 +5,30 @@ def personal_info_from_md_line(txt):
     """Return personal info for lines with links
     
     e.g.
-    input: "`email`    [lucaf@lucaf.eu](mailto:lucaf@lucaf.eu)"
-    output: "lucaf@lucaf.eu"
+    input:  "`email`    [abc@example.com](mailto:abc@example.com)"
+    output: "abc@example.com"
     """
 
     txt = txt.split("[")[1]
     txt = txt.split("]")[0]
     return txt
+
+def slit_cv_line(txt):
+    """Return a tuple of the side bar text and title
+    
+    e.g.
+    input:  "*Gen 2000 -- Dec 2020* Example GmbH -- Intern"
+    output: ("Gen 2000 -- Dec 2020", "Example GmbH -- Intern")
+    """
+
+    if "*" not in txt:
+        return "", txt
+
+    txt = txt.split("*", 1)[1]
+    txt = txt.split("*")
+    side_text = txt[0].strip()
+    title = txt[1].strip()
+    return side_text, title
 
 class CvSection():
 
@@ -19,7 +36,7 @@ class CvSection():
         self.title = title
 
     def to_tex(self):
-        return "\section{{{}}}".format(self.title)
+        return "\\section{{{}}}".format(self.title)
 
 class CvEntry():
 
@@ -28,7 +45,7 @@ class CvEntry():
         self.title = title
 
     def to_tex(self):
-        return "\cventry{{{}}}{{{}}}{{}}{{}}{{}}{{}}".format(self.side_txt, self.title)
+        return "\\cventry{{{}}}{{{}}}{{}}{{}}{{}}{{}}".format(self.side_txt, self.title)
 
 class CurriculumVitae():
 
@@ -83,14 +100,7 @@ class CurriculumVitae():
 
             if line.startswith("### "):
                 txt = line.removeprefix("### ")
-                if "*" not in txt:
-                    side_text = ""
-                    title = txt
-                else:
-                    txt = txt.split("*", 1)[1]
-                    txt = txt.split("*")
-                    side_text = txt[0].strip()
-                    title = txt[1].strip()
+                side_text, title = slit_cv_line(txt)
                 self.content.append(CvEntry(side_text, title))
                 i += 1
                 continue
