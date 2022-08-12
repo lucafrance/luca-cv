@@ -36,6 +36,11 @@ class CurriculumVitae():
                 i += 1
                 continue
             
+            if line.startswith("![]"):
+                self.photo = line.split("(")[1].split(")")[0]
+                i += 1
+                continue
+
             if line.startswith("`email`"):
                 self.email = personal_info_from_md_line(line)
                 i += 1
@@ -60,6 +65,8 @@ class CurriculumVitae():
         tex_out.append("\\name {{{}}}{{{}}}".format(self.name[0], self.name[1]))
         if self.title is not None:
             tex_out.append("\\title{{{}}}".format(self.title))
+        if self.photo is not None:
+            tex_out.append("\\photo[80pt][0pt]{{{}}}".format(self.photo))
         if self.email is not None:
              tex_out.append("\\email{{{}}}".format(self.email))
         if self.homepage is not None:
