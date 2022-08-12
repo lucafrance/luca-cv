@@ -5,6 +5,7 @@ class CurriculumVitae():
 
     def __init__(self):
         self.name = ("John", "Doe")
+        self.title = None
 
     def from_markdown(self, markdown_src):
         lines = markdown_src.splitlines()
@@ -15,6 +16,12 @@ class CurriculumVitae():
                 line = line.removeprefix("# ")
                 self.name = line.split(" ", 1)
                 i += 1
+
+                # The first non-empty line after the name is the title
+                while lines[i] == "":
+                    i += 1
+                self.title = lines[i]
+                i += 1
                 continue
         
             i += 1
@@ -22,6 +29,8 @@ class CurriculumVitae():
     def personal_data_md(self):
         tex_out = []
         tex_out.append("\\name {{{}}}{{{}}}".format(self.name[0], self.name[1]))
+        if self.title is not None:
+            tex_out.append("\\title{{{}}}".format(self.title))
         
         tex_out = "\n".join(tex_out)
         return tex_out
