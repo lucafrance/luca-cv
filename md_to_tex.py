@@ -61,7 +61,10 @@ class CvItem():
 
 class CurriculumVitae():
 
-    def __init__(self):
+    def __init__(self, language=None):
+        if language is None:
+            language = "english"
+        self.language = language
         self.name = ("John", "Doe")
         self.title = None
         self.content = None
@@ -150,6 +153,7 @@ class CurriculumVitae():
 
     def to_tex(self):
         tex_template = open("cv_template.tex", "rt").read()
+        tex_template = tex_template.replace("$language", self.language)
         tex_template = tex_template.replace("$personal_data", self.personal_data_to_tex())
         tex_template = tex_template.replace("$content", self.content_to_tex())
         return tex_template
@@ -157,6 +161,10 @@ class CurriculumVitae():
 
 if __name__ == "__main__":
     src_filename = sys.argv[1]
-    cv = CurriculumVitae()
+    if len(sys.argv) > 2:
+        language = sys.argv[2]
+    else:
+        language = None
+    cv = CurriculumVitae(language)
     cv.from_markdown(open(src_filename, "rt").read())
     open(os.path.splitext(src_filename)[0] + ".tex", "wt").write(cv.to_tex())
