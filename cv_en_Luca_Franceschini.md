@@ -44,11 +44,13 @@ Internal Projects
 
 ## Skills
 
-*IT* git, Power Automate, Python, REST-APIs, T-SQL, VBA
-     Excel, Power Query, PowerPoint, LaTeX
-     Azure DevOps, Confluence, Jira
+**IT** git, Power Automate, Python, REST-APIs, T-SQL, VBA
 
-*Languages* Italian (native), German (fluent), English (fluent)
+Excel, Power Query, PowerPoint, LaTeX
+
+Azure DevOps, Confluence, Jira
+
+**Languages** Italian (native), German (fluent), English (fluent)
 
 ## Certifications
 
