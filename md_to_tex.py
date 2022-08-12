@@ -13,7 +13,7 @@ def personal_info_from_md_line(txt):
     txt = txt.split("]")[0]
     return txt
 
-def slit_cv_line(txt):
+def split_cv_line(txt):
     """Return a tuple of the side bar text and title
     
     e.g.
@@ -46,6 +46,15 @@ class CvEntry():
 
     def to_tex(self):
         return "\\cventry{{{}}}{{{}}}{{}}{{}}{{}}{{}}".format(self.side_txt, self.title)
+
+class CvItem():
+
+    def __init__(self, side_txt, title):
+        self.side_txt = side_txt
+        self.title = title
+
+    def to_tex(self):
+        return "\\cvitem{{{}}}{{{}}}".format(self.side_txt, self.title)
 
 class CurriculumVitae():
 
@@ -100,8 +109,14 @@ class CurriculumVitae():
 
             if line.startswith("### "):
                 txt = line.removeprefix("### ")
-                side_text, title = slit_cv_line(txt)
+                side_text, title = split_cv_line(txt)
                 self.content.append(CvEntry(side_text, title))
+                i += 1
+                continue
+            
+            if line.strip() != "":
+                side_text, title = split_cv_line(line)
+                self.content.append(CvItem(side_text, title))
                 i += 1
                 continue
 
