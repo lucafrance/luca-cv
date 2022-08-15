@@ -1,2 +1,0 @@
-pdflatex cv_de_Luca_Franceschini.tex
-pdflatex cv_en_Luca_Franceschini.tex
