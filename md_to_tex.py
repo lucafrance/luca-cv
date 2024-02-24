@@ -1,9 +1,10 @@
 import os.path
 import sys
 
+
 def personal_info_from_md_line(txt):
     """Return personal info for lines with links
-    
+
     e.g.
     input:  "`email`    [abc@example.com](mailto:abc@example.com)"
     output: "abc@example.com"
@@ -13,42 +14,51 @@ def personal_info_from_md_line(txt):
     txt = txt.split("]")[0]
     return txt
 
+
 def split_cv_line(txt):
     """Return a tuple of the side bar text and title
-    
+
     e.g.
     input:  "*Gen 2000 -- Dec 2020* Example GmbH -- Intern"
     output: ("Gen 2000 -- Dec 2020", "Example GmbH -- Intern")
     """
 
-    if "*" not in txt:
+    content = []
+    if "_" not in txt:
         return "", txt
 
-    txt = txt.split("*", 1)[1]
-    txt = txt.split("*")
-    side_text = txt[0].strip()
+    txt = txt.split("_", 1)[1]
+    txt = txt.split("_")
+    content.append(txt[0].strip())
     title = txt[1].strip()
-    return side_text, title
+    if "--" in title:
+        content.extend(title.split("--"))
+    return content
 
-class CvSection():
 
+class CvSection:
     def __init__(self, title):
         self.title = title
 
     def to_tex(self):
         return "\\section{{{}}}".format(self.title)
 
-class CvEntry():
 
-    def __init__(self, side_txt, title):
-        self.side_txt = side_txt
-        self.title = title
+class CvEntry:
+    def __init__(self, content):
+        self.content = content
 
     def to_tex(self):
-        return "\\cventry{{{}}}{{{}}}{{}}{{}}{{}}{{}}".format(self.side_txt, self.title)
+        # generate cventry arguments based on  number of elements
+        nb_par = 6
+        nb_elt = len(self.content)
+        start = "{{{}}}" * nb_elt
+        end = "{{}}" * (nb_par - nb_elt)
+        entry = f"\\cventry{start}{end}"
+        return entry.format(*self.content)
 
-class CvItem():
 
+class CvItem:
     def __init__(self, side_txt, title):
         self.side_txt = side_txt
         self.title = title
@@ -59,8 +69,8 @@ class CvItem():
             title = "\\( \\circ \\)" + title[1:]
         return "\\cvitem{{{}}}{{{}}}".format(self.side_txt, title)
 
-class CurriculumVitae():
 
+class CurriculumVitae:
     def __init__(self, language=None):
         if language is None:
             language = "english"
@@ -85,7 +95,7 @@ class CurriculumVitae():
                 self.title = lines[i]
                 i += 1
                 continue
-            
+
             if line.startswith("![]"):
                 self.photo = line.split("(")[1].split(")")[0]
                 i += 1
@@ -107,7 +117,7 @@ class CurriculumVitae():
                 self.github = personal_info_from_md_line(line)
                 i += 1
                 continue
-            
+
             if line.startswith("## "):
                 self.content.append(CvSection(line.removeprefix("## ")))
                 i += 1
@@ -115,13 +125,15 @@ class CurriculumVitae():
 
             if line.startswith("### "):
                 txt = line.removeprefix("### ")
-                side_text, title = split_cv_line(txt)
-                self.content.append(CvEntry(side_text, title))
+                content = split_cv_line(txt)
+                self.content.append(CvEntry(content))
                 i += 1
                 continue
-            
+
             if line.strip() != "":
-                side_text, title = split_cv_line(line)
+                content = split_cv_line(line)
+                side_text = content[0]
+                title = "--".join(content[1:])
                 self.content.append(CvItem(side_text, title))
                 i += 1
                 continue
@@ -136,14 +148,14 @@ class CurriculumVitae():
         if self.photo is not None:
             tex_out.append("\\photo[80pt][0pt]{{{}}}".format(self.photo))
         if self.email is not None:
-             tex_out.append("\\email{{{}}}".format(self.email))
+            tex_out.append("\\email{{{}}}".format(self.email))
         if self.homepage is not None:
-             tex_out.append("\\homepage{{{}}}".format(self.homepage))
+            tex_out.append("\\homepage{{{}}}".format(self.homepage))
         if self.linkedin is not None:
-             tex_out.append("\\social[linkedin]{{{}}}".format(self.linkedin))
+            tex_out.append("\\social[linkedin]{{{}}}".format(self.linkedin))
         if self.github is not None:
-             tex_out.append("\\social[github]{{{}}}".format(self.github))
-        
+            tex_out.append("\\social[github]{{{}}}".format(self.github))
+
         tex_out = "\n".join(tex_out)
         return tex_out
 
@@ -154,7 +166,9 @@ class CurriculumVitae():
     def to_tex(self):
         tex_template = open("cv_template.tex", "rt").read()
         tex_template = tex_template.replace("$language", self.language)
-        tex_template = tex_template.replace("$personal_data", self.personal_data_to_tex())
+        tex_template = tex_template.replace(
+            "$personal_data", self.personal_data_to_tex()
+        )
         tex_template = tex_template.replace("$content", self.content_to_tex())
         return tex_template
 
