@@ -17,5 +17,8 @@ Acknowledgment
 
 # Changes from original repo
 
+## Fri Feb 23 10:28:44 PM EST 2024
+
 - split dates using `_` rather than `*` (for some reason my editor changes those)
 - split CV entry titles based on `--` pattern and pass it to `\cventry` with correct number of arguments
+- add config variable to the top to reproduce original design

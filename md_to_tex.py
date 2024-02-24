@@ -1,6 +1,9 @@
 import os.path
 import sys
 
+DATE_SEP = "_"
+SPLIT_TITLE = True
+
 
 def personal_info_from_md_line(txt):
     """Return personal info for lines with links
@@ -24,14 +27,14 @@ def split_cv_line(txt):
     """
 
     content = []
-    if "_" not in txt:
+    if DATE_SEP not in txt:
         return "", txt
 
-    txt = txt.split("_", 1)[1]
-    txt = txt.split("_")
+    txt = txt.split(DATE_SEP, 1)[1]
+    txt = txt.split(DATE_SEP)
     content.append(txt[0].strip())
     title = txt[1].strip()
-    if "--" in title:
+    if SPLIT_TITLE and "--" in title:
         content.extend(title.split("--"))
     return content
 
