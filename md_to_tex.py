@@ -36,6 +36,8 @@ def split_cv_line(txt):
     title = txt[1].strip()
     if SPLIT_TITLE and "--" in title:
         content.extend(title.split("--"))
+    else:
+        content.append(title)
     return content
 
 
@@ -120,6 +122,10 @@ class CurriculumVitae:
                 self.github = personal_info_from_md_line(line)
                 i += 1
                 continue
+            if line.startswith("`gitlab`"):
+                self.gitlab = personal_info_from_md_line(line)
+                i += 1
+                continue
 
             if line.startswith("## "):
                 self.content.append(CvSection(line.removeprefix("## ")))
@@ -158,6 +164,8 @@ class CurriculumVitae:
             tex_out.append("\\social[linkedin]{{{}}}".format(self.linkedin))
         if self.github is not None:
             tex_out.append("\\social[github]{{{}}}".format(self.github))
+        if self.gitlab is not None:
+            tex_out.append("\\social[gitlab]{{{}}}".format(self.gitlab))
 
         tex_out = "\n".join(tex_out)
         return tex_out
